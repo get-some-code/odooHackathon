@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Role: ADMIN, EMPLOYEE
+model User {
+  id              String           @id @default(cuid())
+  employeeId      String           @unique
+  email           String           @unique
+  password        String // Hashed password
+  firstName       String
+  lastName        String
+  role            String           @default("EMPLOYEE") // ADMIN, EMPLOYEE
+  isVerified      Boolean          @default(false)
+  otpCode         String?
+  otpExpiresAt    DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  profile         EmployeeProfile?
+  attendances     Attendance[]
+  leaveRequests   LeaveRequest[]
+  payrolls        Payroll[]
+  documents       Document[]
+  lifecycleEvents LifecycleEvent[]
+}
+
+model EmployeeProfile {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  phone        String?
+  address      String?
+  department   String?
+  designation  String?
+  joiningDate  DateTime?
+  profileImage String?
+  baseSalary   Float     @default(35000)
+  status       String    @default("Active") // Active, On Leave, Probation, Suspended, Resigned, Terminated, Retired
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Attendance Status: PRESENT, ABSENT, HALF_DAY, LEAVE
+model Attendance {
+  id       String    @id @default(cuid())
+  userId   String
+  date     DateTime
+  checkIn  DateTime?
+  checkOut DateTime?
+  status   String    @default("PRESENT") // PRESENT, ABSENT, HALF_DAY, LEAVE
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+}
+
+// Leave Type: PAID, SICK, UNPAID
+// Leave Status: PENDING, APPROVED, REJECTED
+model LeaveRequest {
+  id           String   @id @default(cuid())
+  userId       String
+  leaveType    String // PAID, SICK, UNPAID
+  startDate    DateTime
+  endDate      DateTime
+  reason       String
+  status       String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  adminComment String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Payroll {
+  id                 String   @id @default(cuid())
+  userId             String
+  month              Int
+  year               Int
+  basicSalary        Float
+  allowances         Float    @default(0)
+  deductions         Float    @default(0)
+  netSalary          Float
+  houseRentAllowance Float    @default(0)
+  medicalAllowance   Float    @default(0)
+  travelAllowance    Float    @default(0)
+  otherAllowances    Float    @default(0)
+  tax                Float    @default(0)
+  providentFund      Float    @default(0)
+  professionalTax    Float    @default(0)
+  otherDeductions    Float    @default(0)
+  bonus              Float    @default(0)
+  paymentStatus      String   @default("PAID")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([month, year])
+}
+
+model Document {
+  id           String    @id @default(cuid())
+  userId       String
+  name         String
+  fileType     String    @default("Other") // Aadhaar, PAN, Resume, Offer Letter, Passport, etc.
+  fileUrl      String
+  status       String    @default("PENDING") // PENDING, VERIFIED, REJECTED
+  adminComment String?
+  uploadedAt   DateTime  @default(now())
+  verifiedAt   DateTime?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model LifecycleEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  oldStatus   String?
+  newStatus   String
+  reason      String?
+  date        DateTime @default(now())
+  updatedBy   String   // Admin name or ID
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model CompanySettings {
+  id           String   @id @default("company-settings")
+  companyName  String   @default("Nexus Enterprise")
+  logoUrl      String?
+  address      String?
+  workingHours Float    @default(8.0)
+  officeTiming String   @default("09:00 - 18:00")
+  weeklyOff    String   @default("Saturday, Sunday")
+  timezone     String   @default("UTC+05:30")
+  currency     String   @default("INR")
+  financialYear String   @default("2026-2027")
+}
+
+model Holiday {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  isOptional  Boolean  @default(false)
+  isRecurring Boolean  @default(false)
+  category    String   @default("Public") // Public, Optional, Regional, Gazetted, Restricted
+}
