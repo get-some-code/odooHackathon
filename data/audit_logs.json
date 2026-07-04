@@ -1,5 +1,32 @@
 [
   {
+    "id": "hmgx4j6",
+    "timestamp": "2026-07-04T10:04:12.709Z",
+    "action": "Document Verified",
+    "adminId": "cmr5v99920001gcjyzpn3ydsf",
+    "adminName": "Monideep Mistry",
+    "affectedEmployeeId": "cmr66ykov00e91vqbxmr6f58g",
+    "affectedEmployeeName": "Document: PAN - Comment: None"
+  },
+  {
+    "id": "n60bo7k",
+    "timestamp": "2026-07-04T10:03:49.984Z",
+    "action": "Document Verified",
+    "adminId": "cmr5v99920001gcjyzpn3ydsf",
+    "adminName": "Monideep Mistry",
+    "affectedEmployeeId": "cmr66ykov00e91vqbxmr6f58g",
+    "affectedEmployeeName": "Document: PAN - Comment: Verified successfully"
+  },
+  {
+    "id": "vdr0mfg",
+    "timestamp": "2026-07-04T09:20:32.939Z",
+    "action": "Employee Updated",
+    "adminId": "cmr5v99920001gcjyzpn3ydsf",
+    "adminName": "Monideep Mistry",
+    "affectedEmployeeId": "cmr659pmf00011vqbgdtyj68x",
+    "affectedEmployeeName": "Rahul Giri"
+  },
+  {
     "id": "g8yl4gj",
     "timestamp": "2026-07-04T06:39:36.219Z",
     "action": "Employee Updated",

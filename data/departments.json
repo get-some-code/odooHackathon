@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Engineering",
+    "managerName": "Monideep",
+    "description": "Product & Engineering team",
+    "createdAt": "2026-07-04T09:14:56.057Z"
+  },
+  {
+    "name": "Design",
+    "managerName": "Sarah Connor",
+    "description": "UI, UX & Branding team",
+    "createdAt": "2026-07-04T09:14:56.057Z"
+  },
+  {
+    "name": "Marketing",
+    "managerName": "John Smith",
+    "description": "Publicity & Growth team",
+    "createdAt": "2026-07-04T09:14:56.057Z"
+  },
+  {
+    "name": "Operations",
+    "managerName": "David Miller",
+    "description": "Internal operations & delivery",
+    "createdAt": "2026-07-04T09:14:56.057Z"
+  },
+  {
+    "name": "HR",
+    "managerName": "Emma Watson",
+    "description": "Talent acquisition & payroll management",
+    "createdAt": "2026-07-04T09:14:56.057Z"
+  }
+]

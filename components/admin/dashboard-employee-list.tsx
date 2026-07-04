@@ -169,7 +169,7 @@ export function DashboardEmployeeList({ employees }: DashboardEmployeeListProps)
         </div>
 
         {/* Table container */}
-        <div className="overflow-x-auto border border-[var(--border-subtle)] rounded-xl">
+        <div className="overflow-x-auto overflow-y-auto max-h-[400px] border border-[var(--border-subtle)] rounded-xl">
           <Table>
             <TableHeader className="bg-[var(--surface-raised)] border-b border-[var(--border-subtle)]">
               <TableRow>

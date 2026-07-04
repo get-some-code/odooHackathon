@@ -35,13 +35,17 @@ export async function middleware(request: NextRequest) {
     if (!session) {
       // User is unauthenticated, redirect to login
       const loginUrl = new URL("/login", request.url);
-      // Optional: keep redirect URL for post-login redirection
       loginUrl.searchParams.set("callbackUrl", path);
       return NextResponse.redirect(loginUrl);
     }
 
+    // Admins visiting /dashboard → send to admin dashboard
+    if (path === "/dashboard" && session.role === "ADMIN") {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+
     if (isAdminRoute(path) && session.role !== "ADMIN") {
-      // Non-admins attempting to access admin dashboard redirect to employee dashboard
+      // Non-admins attempting to access admin routes → employee dashboard
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }

@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Software Engineer",
+    "department": "Engineering",
+    "hierarchyLevel": 3
+  },
+  {
+    "title": "Senior Software Engineer",
+    "department": "Engineering",
+    "hierarchyLevel": 2
+  },
+  {
+    "title": "Engineering Lead",
+    "department": "Engineering",
+    "hierarchyLevel": 1
+  },
+  {
+    "title": "Product Designer",
+    "department": "Design",
+    "hierarchyLevel": 3
+  },
+  {
+    "title": "Design Director",
+    "department": "Design",
+    "hierarchyLevel": 1
+  },
+  {
+    "title": "Marketing Analyst",
+    "department": "Marketing",
+    "hierarchyLevel": 3
+  },
+  {
+    "title": "Operations Coordinator",
+    "department": "Operations",
+    "hierarchyLevel": 3
+  },
+  {
+    "title": "HR Generalist",
+    "department": "HR",
+    "hierarchyLevel": 3
+  }
+]

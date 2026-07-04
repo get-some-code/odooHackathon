@@ -144,7 +144,7 @@ export function AdminDocumentsView({ initialDocuments }: AdminDocumentsViewProps
         </CardContent>
       </Card>
 
-      <Card className="glass border-[var(--border)]">
+      <Card className="glass border-[var(--border)] max-h-[500px] overflow-y-auto">
         <CardContent className="p-0">
           <Table>
             <TableHeader>

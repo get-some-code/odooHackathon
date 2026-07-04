@@ -10,6 +10,7 @@ import { StatusChip } from "@/components/ui/status-chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CalendarCheck, FileText, CreditCard, Clock, Calendar, Bell } from "lucide-react";
 import type { Metadata } from "next";
+import { AttendanceClockCard } from "@/components/dashboard/attendance-clock-card";
 
 export const metadata: Metadata = {
   title: "Dashboard | HRMS",
@@ -93,59 +94,69 @@ export default async function EmployeeDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Attendance */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Recent Attendance</CardTitle>
-                  <CardDescription>Your last 5 active logs</CardDescription>
-                </div>
-                <Badge variant="primary" dot>Live</Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {data.recentAttendance.length > 0 ? (
-                <div className="space-y-3">
-                  {data.recentAttendance.map((row) => (
-                    <div
-                      key={row.id}
-                      className="flex items-center justify-between py-2.5 border-b border-[var(--border-subtle)] last:border-0"
-                    >
-                      <div className="flex items-center gap-3">
-                        <StatusChip status={row.status.toLowerCase() as "present" | "absent" | "half_day" | "leave" | "pending"} />
-                        <span className="text-sm font-medium text-[var(--text-secondary)]">
-                          {formatDate(row.date)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs text-[var(--text-muted)]">
-                        <span>
-                          In:{" "}
-                          <span className="font-semibold text-[var(--text-secondary)]">
-                            {formatTime(row.checkIn)}
-                          </span>
-                        </span>
-                        <span>
-                          Out:{" "}
-                          <span className="font-semibold text-[var(--text-secondary)]">
-                            {formatTime(row.checkOut)}
-                          </span>
-                        </span>
-                      </div>
+        {/* Quick Check-in/Out & Recent Attendance */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+            {/* Quick Clock-in/Clock-out Panel */}
+            <div className="md:col-span-2">
+              <AttendanceClockCard />
+            </div>
+
+            {/* Recent Attendance Logs */}
+            <div className="md:col-span-3">
+              <Card className="h-full flex flex-col justify-between">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>Recent Attendance</CardTitle>
+                      <CardDescription>Your last 5 active logs</CardDescription>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <EmptyState
-                  icon={<CalendarCheck className="h-5 w-5" />}
-                  title="No attendance records"
-                  description="Your check-in history will be loaded once you check in."
-                  className="border-0 py-6"
-                />
-              )}
-            </CardContent>
-          </Card>
+                    <Badge variant="primary" dot>Live</Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col justify-center">
+                  {data.recentAttendance.length > 0 ? (
+                    <div className="space-y-3">
+                      {data.recentAttendance.map((row) => (
+                        <div
+                          key={row.id}
+                          className="flex items-center justify-between py-2 border-b border-[var(--border-subtle)] last:border-0"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <StatusChip status={row.status.toLowerCase() as "present" | "absent" | "half_day" | "leave" | "pending"} />
+                            <span className="text-xs font-semibold text-[var(--text-secondary)]">
+                              {formatDate(row.date)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 text-[10px] text-[var(--text-muted)]">
+                            <span>
+                              In:{" "}
+                              <span className="font-semibold text-[var(--text-secondary)]">
+                                {formatTime(row.checkIn)}
+                              </span>
+                            </span>
+                            <span>
+                              Out:{" "}
+                              <span className="font-semibold text-[var(--text-secondary)]">
+                                {formatTime(row.checkOut)}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <EmptyState
+                      icon={<CalendarCheck className="h-5 w-5" />}
+                      title="No attendance records"
+                      description="Your check-in history will be loaded once you check in."
+                      className="border-0 py-4"
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
 
         {/* Quick panels */}

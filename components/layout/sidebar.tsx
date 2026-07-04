@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, CalendarCheck, FileText, CreditCard,
-  ChevronLeft, ChevronRight, LogOut, Shield, Settings,
+  ChevronLeft, ChevronRight, LogOut, Shield, Settings, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/ui/avatar";
@@ -19,7 +19,6 @@ interface NavItem {
   label: string;
   href: string;
   icon: React.ElementType;
-  adminOnly?: boolean;
   badge?: string;
 }
 
@@ -28,7 +27,42 @@ interface NavGroup {
   items: NavItem[];
 }
 
-const navGroups: NavGroup[] = [
+// Admin / HR navigation
+const adminNavGroups: NavGroup[] = [
+  {
+    label: "Overview",
+    items: [
+      { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+      { label: "NexusAI Assistant", href: "/admin/ai-assistant", icon: Sparkles },
+    ],
+  },
+  {
+    label: "Workforce",
+    items: [
+      { label: "Employees",   href: "/admin/employees",   icon: Users   },
+      { label: "Departments", href: "/admin/departments", icon: Shield  },
+      { label: "Attendance",  href: "/attendance",        icon: CalendarCheck },
+    ],
+  },
+  {
+    label: "Leave & Pay",
+    items: [
+      { label: "Leave Approvals",  href: "/admin/leave",     icon: FileText  },
+      { label: "Payroll Admin",    href: "/admin/payroll",   icon: CreditCard },
+      { label: "Document Board",   href: "/admin/documents", icon: FileText  },
+    ],
+  },
+  {
+    label: "Administration",
+    items: [
+      { label: "Audit Reports",  href: "/admin/reports",   icon: Shield   },
+      { label: "Admin Settings", href: "/admin/settings",  icon: Settings },
+    ],
+  },
+];
+
+// Employee self-service navigation
+const employeeNavGroups: NavGroup[] = [
   {
     label: "Overview",
     items: [
@@ -38,27 +72,20 @@ const navGroups: NavGroup[] = [
   {
     label: "Workforce",
     items: [
-      { label: "Employees",   href: "/admin/employees",   icon: Users,         adminOnly: true },
-      { label: "Departments", href: "/admin/departments", icon: Shield,        adminOnly: true },
-      { label: "Attendance",  href: "/attendance",        icon: CalendarCheck },
+      { label: "Attendance", href: "/attendance", icon: CalendarCheck },
     ],
   },
   {
     label: "Leave & Pay",
     items: [
-      { label: "Leave",           href: "/leave",         icon: FileText  },
-      { label: "Leave Approvals", href: "/admin/leave",   icon: Shield,   adminOnly: true },
-      { label: "Payroll",         href: "/payroll",       icon: CreditCard },
-      { label: "Payroll Admin",   href: "/admin/payroll", icon: Shield,   adminOnly: true },
-      { label: "Document Board",  href: "/admin/documents", icon: Shield,  adminOnly: true },
+      { label: "Leave",    href: "/leave",    icon: FileText   },
+      { label: "Payroll",  href: "/payroll",  icon: CreditCard },
     ],
   },
   {
     label: "Administration",
     items: [
-      { label: "Settings",        href: "/settings",       icon: Settings },
-      { label: "Admin Settings",  href: "/admin/settings", icon: Shield,   adminOnly: true },
-      { label: "Audit Reports",   href: "/admin/reports",  icon: Shield,   adminOnly: true },
+      { label: "Settings", href: "/settings", icon: Settings },
     ],
   },
 ];
@@ -121,11 +148,7 @@ export function Sidebar({ user, collapsed, onToggle }: SidebarProps) {
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-2.5 space-y-5">
-          {navGroups.map((group) => {
-            const visibleItems = group.items.filter(
-              (item) => !item.adminOnly || isAdmin
-            );
-            if (visibleItems.length === 0) return null;
+          {(isAdmin ? adminNavGroups : employeeNavGroups).map((group) => {
             return (
               <div key={group.label}>
                 <AnimatePresence>
@@ -141,17 +164,14 @@ export function Sidebar({ user, collapsed, onToggle }: SidebarProps) {
                   )}
                 </AnimatePresence>
                 <ul className="space-y-0.5">
-                  {visibleItems.map((item) => {
-                    const resolvedHref = item.href === "/dashboard" && isAdmin ? "/admin/dashboard" : item.href;
-                    return (
-                      <SidebarItem
-                        key={item.href}
-                        item={{ ...item, href: resolvedHref }}
-                        active={isActive(resolvedHref)}
-                        collapsed={collapsed}
-                      />
-                    );
-                  })}
+                  {group.items.map((item) => (
+                    <SidebarItem
+                      key={item.href}
+                      item={item}
+                      active={isActive(item.href)}
+                      collapsed={collapsed}
+                    />
+                  ))}
                 </ul>
               </div>
             );
