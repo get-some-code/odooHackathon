@@ -299,8 +299,8 @@ export function EmployeesDirectory() {
     try {
       const [profileRes, historyRes, attRes, lifeRes] = await Promise.all([
         getProfileAction(emp.id),
-        getLeaveHistoryAction({ page: 1, limit: 5 }), // query leave histories
-        getAttendanceHistoryAction({ page: 1, limit: 5 }), // query checkin logs
+        getLeaveHistoryAction({ page: 1, limit: 5, targetUserId: emp.id }), // query leave histories
+        getAttendanceHistoryAction({ page: 1, limit: 5, targetUserId: emp.id }), // query checkin logs
         getLifecycleHistoryAction(emp.id),
       ]);
 

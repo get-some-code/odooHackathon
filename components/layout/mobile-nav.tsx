@@ -100,13 +100,14 @@ export function MobileNav({ open, onClose, user }: MobileNavProps) {
               {navItems
                 .filter((item) => !item.adminOnly || isAdmin)
                 .map((item) => {
-                  const active = item.href === "/dashboard"
-                    ? pathname === "/dashboard"
-                    : pathname.startsWith(item.href);
+                  const resolvedHref = item.href === "/dashboard" && isAdmin ? "/admin/dashboard" : item.href;
+                  const active = resolvedHref === "/dashboard" || resolvedHref === "/admin/dashboard"
+                    ? pathname === resolvedHref
+                    : pathname.startsWith(resolvedHref);
                   return (
                     <Link
                       key={item.href}
-                      href={item.href}
+                      href={resolvedHref}
                       onClick={onClose}
                       className={cn(
                         "flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-lg)]",

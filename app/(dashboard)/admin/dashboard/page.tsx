@@ -7,11 +7,13 @@ import { DashboardWidgets } from "@/components/dashboard/dashboard-widgets";
 import { DemoPanel } from "@/components/admin/demo-panel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { StatusChip } from "@/components/ui/status-chip";
 import { Button } from "@/components/ui/button";
 import { Users, CalendarCheck, FileText, CreditCard, Plus } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { db } from "@/lib/db";
+import { DashboardLeaveApprover } from "@/components/admin/dashboard-leave-approver";
+import { DashboardEmployeeList } from "@/components/admin/dashboard-employee-list";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | HRMS",
@@ -22,6 +24,12 @@ export default async function AdminDashboard() {
   if (!session || session.role !== "ADMIN") {
     redirect("/login");
   }
+
+  const employees = await db.user.findMany({
+    where: { role: "EMPLOYEE" },
+    include: { profile: true },
+    orderBy: { createdAt: "desc" },
+  });
 
   const res = await getAdminDashboardDataAction();
   if (!res.success || !res.data) {
@@ -133,41 +141,16 @@ export default async function AdminDashboard() {
 
         {/* Recent Leave Requests */}
         <div>
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Leave Requests</CardTitle>
-                <Badge variant="warning">{data.openLeaves} pending</Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {data.recentLeaves.length > 0 ? (
-                <div className="space-y-3">
-                  {data.recentLeaves.map((r) => (
-                    <div
-                      key={r.id}
-                      className="flex items-start justify-between gap-2 p-2.5 rounded-[var(--radius-lg)] hover:bg-[var(--surface-raised)] transition-colors"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
-                          {r.name}
-                        </p>
-                        <p className="text-xs text-[var(--text-muted)] font-medium">
-                          {r.type} · {r.days} {r.days === 1 ? "day" : "days"}
-                        </p>
-                      </div>
-                      <StatusChip status={r.status as "present" | "absent" | "half_day" | "leave" | "pending"} />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-8 text-center text-xs text-[var(--text-muted)]">
-                  No recent leave requests found.
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <DashboardLeaveApprover
+            initialLeaves={data.recentLeaves}
+            openLeavesCount={data.openLeaves}
+          />
         </div>
+      </div>
+
+      {/* Workforce Directory */}
+      <div className="mt-8">
+        <DashboardEmployeeList employees={employees} />
       </div>
 
       <div className="mt-8 border-t border-[var(--border-subtle)] pt-8">
@@ -176,3 +159,4 @@ export default async function AdminDashboard() {
     </PageContainer>
   );
 }
+

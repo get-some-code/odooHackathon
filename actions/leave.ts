@@ -211,6 +211,7 @@ export async function getLeaveHistoryAction(params: {
   limit?: number;
   status?: string;
   leaveType?: string;
+  targetUserId?: string;
 }): Promise<ActionResponse<{ items: LeaveHistoryItem[]; total: number }>> {
   try {
     const session = await getSession();
@@ -220,8 +221,13 @@ export async function getLeaveHistoryAction(params: {
     const limit = params.limit || 5;
     const skip = (page - 1) * limit;
 
+    const targetUserId = params.targetUserId || session.id;
+    if (targetUserId !== session.id && session.role !== "ADMIN") {
+      return { success: false, error: "Access denied" };
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const whereClause: any = { userId: session.id };
+    const whereClause: any = { userId: targetUserId };
 
     if (params.status && params.status !== "ALL") {
       whereClause.status = params.status;

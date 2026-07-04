@@ -82,7 +82,9 @@ export function Sidebar({ user, collapsed, onToggle }: SidebarProps) {
   };
 
   const isActive = (href: string) =>
-    href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
+    href === "/dashboard" || href === "/admin/dashboard"
+      ? pathname === href
+      : pathname.startsWith(href);
 
   return (
     <>
@@ -139,14 +141,17 @@ export function Sidebar({ user, collapsed, onToggle }: SidebarProps) {
                   )}
                 </AnimatePresence>
                 <ul className="space-y-0.5">
-                  {visibleItems.map((item) => (
-                    <SidebarItem
-                      key={item.href}
-                      item={item}
-                      active={isActive(item.href)}
-                      collapsed={collapsed}
-                    />
-                  ))}
+                  {visibleItems.map((item) => {
+                    const resolvedHref = item.href === "/dashboard" && isAdmin ? "/admin/dashboard" : item.href;
+                    return (
+                      <SidebarItem
+                        key={item.href}
+                        item={{ ...item, href: resolvedHref }}
+                        active={isActive(resolvedHref)}
+                        collapsed={collapsed}
+                      />
+                    );
+                  })}
                 </ul>
               </div>
             );

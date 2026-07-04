@@ -39,10 +39,16 @@ export default function EmployeeLoginPage() {
     setInfoMessage(null);
     try {
       const response = await requestLoginOtpAction(data, "EMPLOYEE");
-      if (response.success && response.data?.otpSent) {
-        setEmailInput(data.email);
-        setStep("OTP");
-        setInfoMessage("We have sent a verification code to your email. Check your server console log!");
+      if (response.success) {
+        if (response.data?.otpSent) {
+          setEmailInput(data.email);
+          setStep("OTP");
+          setInfoMessage("We have sent a verification code to your email. Check your server console log!");
+        } else {
+          const targetUrl = callbackUrl || "/dashboard";
+          router.push(targetUrl);
+          router.refresh();
+        }
       } else {
         setError(response.error || "Invalid email or password");
       }
@@ -210,7 +216,7 @@ export default function EmployeeLoginPage() {
                     </>
                   ) : (
                     <>
-                      <span>Send Verification Code</span>
+                      <span>Sign In</span>
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </>
                   )}

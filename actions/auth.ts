@@ -154,25 +154,31 @@ export async function requestLoginOtpAction(
       return { success: false, error: "This account has Admin privileges. Use Admin portal." };
     }
 
-    // 5. Generate 6-digit OTP code
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // Expires in 5 minutes
-
-    // 6. Save in DB
-    await db.user.update({
-      where: { id: user.id },
-      data: {
-        otpCode,
-        otpExpiresAt,
-      },
+    // 5. Generate JWT token directly (bypassing OTP)
+    const token = await signJWT({
+      id: user.id,
+      employeeId: user.employeeId,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
     });
 
-    // 7. Send OTP Email
-    await sendOtpEmail(email, otpCode);
+    // 6. Set secure cookie
+    const cookieStore = await cookies();
+    cookieStore.set({
+      name: "auth_token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60, // 7 days
+      path: "/",
+    });
 
-    return { success: true, data: { otpSent: true } };
+    return { success: true, data: { otpSent: false } };
   } catch (error) {
-    console.error("Request OTP error:", error);
+    console.error("Direct login error:", error);
     return { success: false, error: "Failed to process request. Please try again." };
   }
 }
